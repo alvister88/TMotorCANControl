@@ -26,6 +26,25 @@ MIT_Params = {
             5 : 'Encoder fault',
             6 : 'Phase current unbalance fault (The hardware may be damaged)'
         },
+        'RO-100':{
+            'P_min' : -10.0,
+            'P_max' : 10.0,
+            'V_min' : -100.0,
+            'V_max' : 100.0,
+            'T_min' : -80.0,
+            'T_max' : 80.0,
+            'Kp_min': 0.0,
+            'Kp_max': 500.0,
+            'Kd_min': 0.0,
+            'Kd_max': 5.0,
+            'Kt_TMotor' : 0.2, # from TMotor website (actually 1/Kvll)
+            'Current_Factor' : 0.59, # to correct the qaxis current 
+            'Kt_actual': 0.2,# Need to use the right constant -- 0.115 by our calcs, 0.091 by theirs. At output leads to 1.31 by them and 1.42 by us.
+            'GEAR_RATIO': 10.0, # hence the 9 in the name
+            'Use_derived_torque_constants': False, # true if you have a better model
+            # 'a_hat' : [0.0, 1.15605006e+00, 4.17389589e-04, 2.68556072e-01, 4.90424140e-02]
+            #'a_hat' : [0.0,  8.23741648e-01, 4.57963164e-04,     2.96032614e-01, 9.31279510e-02]# [7.35415941e-02, 6.26896231e-01, 2.65240487e-04,     2.96032614e-01,  7.08736309e-02]# [-5.86860385e-02,6.50840079e-01,3.47461078e-04,8.58635580e-01,2.93809281e-01]
+        },
         'AK80-9':{
             'P_min' : -12.5,
             'P_max' : 12.5,
@@ -280,9 +299,10 @@ class CAN_Manager(object):
             cls._instance = super(CAN_Manager, cls).__new__(cls)
             print("Initializing CAN Manager")
             # verify the CAN bus is currently down
-            os.system( 'sudo /sbin/ip link set can0 down' )
+            os.system( 'sudo ip link set can0 down' )
             # start the CAN bus back up
-            os.system( 'sudo /sbin/ip link set can0 up type can bitrate 1000000' )
+            os.system( 'sudo ip link set can0 up type can bitrate 1000000' )
+            print('baudrate 1000000')
             # create a python-can bus object
             cls._instance.bus = can.interface.Bus(channel='can0', bustype='socketcan')# bustype='socketcan_native')
             # create a python-can notifier object, which motors can later subscribe to
@@ -302,7 +322,7 @@ class CAN_Manager(object):
         # shut down the CAN bus when the object is deleted
         # This may not ever get called, so keep a reference and explicitly delete if this is important.
         """
-        os.system( 'sudo /sbin/ip link set can0 down' ) 
+        os.system( 'sudo ip link set can0 down' ) 
 
     # subscribe a motor object to the CAN bus to be updated upon message reception
     def add_motor(self, motor):
