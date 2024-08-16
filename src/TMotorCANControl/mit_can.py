@@ -38,7 +38,7 @@ MIT_Params = {
             'Kd_min': 0.0,
             'Kd_max': 5.0,
             'Kt_TMotor' : 0.2, # from TMotor website (actually 1/Kvll)
-            'Current_Factor' : 0.59, # to correct the qaxis current 
+            'Current_Factor' : 1.0, # to correct the qaxis current 
             'Kt_actual': 0.2,# Need to use the right constant -- 0.115 by our calcs, 0.091 by theirs. At output leads to 1.31 by them and 1.42 by us.
             'GEAR_RATIO': 10.0, # hence the 9 in the name
             'Use_derived_torque_constants': False, # true if you have a better model
